@@ -1,0 +1,32 @@
+﻿# @ArduinoIDECompatibility@=1.0
+
+menu.cpu=Processor
+
+
+##############################################################
+
+edtracker.name=ED Tracker
+edtracker.build.mcu=atmega32u4
+edtracker.build.f_cpu=16000000L
+edtracker.build.core=edtracker
+edtracker.build.variant=edtracker
+edtracker.build.vid=0x2341
+edtracker.build.pid=0x8036
+edtracker.build.usb_product="ED Tracker"
+edtracker.build.board=AVR_EDTRACKER
+edtracker.build.extra_flags={build.usb_flags}
+edtracker.upload.protocol=avr109
+edtracker.upload.maximum_size=28672
+edtracker.upload.speed=57600
+edtracker.upload.disable_flushing=true
+edtracker.upload.use_1200bps_touch=true
+edtracker.upload.wait_for_upload_port=true
+edtracker.upload.tool=avrdude
+edtracker.upload.maximum_data_size=2560
+edtracker.bootloader.tool=avrdude
+edtracker.bootloader.low_fuses=0xff
+edtracker.bootloader.high_fuses=0xd8
+edtracker.bootloader.extended_fuses=0xcb
+edtracker.bootloader.file=caterina/Caterina-Leonardo.hex
+edtracker.bootloader.unlock_bits=0x3F
+edtracker.bootloader.lock_bits=0x2F
