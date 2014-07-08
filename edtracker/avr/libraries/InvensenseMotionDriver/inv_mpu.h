@@ -60,7 +60,7 @@ struct int_param_s {
 #define MPU_INT_STATUS_DMP_5            (0x2000)
 
 /* Set up APIs */
-void  mpu_init();
+void  mpu_init(unsigned char* revision);
 uint8_t mpu_init_slave(void);
 uint8_t mpu_set_bypass(unsigned char bypass_on);
 void mpu_force_reset();

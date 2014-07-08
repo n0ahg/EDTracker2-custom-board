@@ -591,7 +591,7 @@ const struct hw_s hw = {
 #endif
 };
 
-const struct test_s test = {
+const struct test_s test = {kjkljl
     .gyro_sens      = 131,//32768/250,
     .accel_sens     = 2048,//32768/16,
     .reg_rate_div   = 0,    /* 1kHz. */
@@ -734,20 +734,28 @@ void mpu_force_reset()
  *  @param[in]  int_param   Platform-specific parameters to interrupt API.
  *  @return     0 if successful.
  */
-void  mpu_init()
+void  mpu_init(unsigned char* revision)
 {
     unsigned char data[6], rev;
 
-    /* Reset device. */
+	*revision = 255;
+	
+    // Reset device. 
     data[0] = BIT_RESET;
     if (i2c_write(st.hw->addr, st.reg->pwr_mgmt_1, 1, data))
         return ;
     delay_ms(100);
 
-    /* Wake up chip. */
+    // Wake up chip. 
     data[0] = 0x00;
     if (i2c_write(st.hw->addr, st.reg->pwr_mgmt_1, 1, data))
         return ;
+
+/*		
+    data[0] = 0x03; // from multiwii code sleep 0, cycle 0, temp_dis 0 , clksel 3
+    if (i2c_write(st.hw->addr, st.reg->pwr_mgmt_1, 1, data))
+        return ;
+		*/
 
 #if defined MPU6050
     /* Check product revision. */
@@ -756,6 +764,7 @@ void  mpu_init()
     rev = ((data[5] & 0x01) << 2) | ((data[3] & 0x01) << 1) |
         (data[1] & 0x01);
 
+    *revision = rev;
     if (rev) {
         /* Congrats, these parts are better. */
         if (rev == 1)
@@ -824,7 +833,7 @@ void  mpu_init()
 
     mpu_set_gyro_fsr(2000);//2000dps
     mpu_set_accel_fsr(2);  //2g
-    mpu_set_sample_rate(50);//50
+    mpu_set_sample_rate(100);//50
     mpu_set_lpf(42);   // 188, 98, 42, 20, 10, 5
     mpu_configure_fifo(0);
     
@@ -1006,6 +1015,7 @@ uint8_t mpu_get_temperature(long *data, unsigned long *timestamp)
         get_ms(timestamp);
 
     data[0] = (long)((35 + ((raw - (float)st.hw->temp_offset) / st.hw->temp_sens)) * 65536L);
+	//data[0] = (long)(((float)raw /340.0)+36.53) * 65536L;
     return 0;
 }
 
@@ -3113,7 +3123,6 @@ void  mpu_set_accel_bias_6050_reg(const long *accel_bias, unsigned char relative
 	//i2c_write(st.hw->addr, 0x0A, 2, &data[4]);
     return ;
 }
-
 
 /**
  *  @}
