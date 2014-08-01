@@ -29,8 +29,6 @@
 
 Mouse_ Mouse;
 Keyboard_ Keyboard;
-Tracker_ Tracker;
-
 
 //================================================================================
 //================================================================================
@@ -126,44 +124,8 @@ const u8 _hidReportDescriptor[] = {
 	0x95, 64,				// report count RX
 	0x09, 0x02,				// usage
 	0x91, 0x02,				// Output (array)
-	0xC0,				// end collection
+	0xC0					// end collection
 #endif
-
-
-
-//Head Tracker - 3 axis joystick, no buttons
- 0x05, 0x01, // Usage Page (Generic Desktop) /
- 0x09, 0x04, // Usage (Joystick) / 
-
- 0xa1, 0x01, // Collection (Application) 
- 0x85, 0x04,	 // REPORT_ID 
-
- 0x09, 0x01,   // Usage (Pointer) 
- 0xa1, 0x00,   // Collection (Physical) 
- 0x05, 0x01,     // Usage Page (Generic Desktop)
- 0x09, 0x30,     // Usage (X) 
- 0x09, 0x31,     // Usage (Y) 
- 0x09, 0x32,     // Usage (Z) 
-
- //0x35, 0x81,     // PHYSICAL_MINIMUM (-127)
- //0x15, 0x81,     // LOGICAL_MINIMUM (-127)
- //0x26, 0x7f, 0x00,  //   LOGICAL_MAXIMUM (127)
- //0x46, 0x7f, 0x00,  //   PHYSICAL_MAXIMUM (127) 
-
-  0x16, 0x00, 0x80, /* Logical Minimum (-32768) */
- 0x26, 0xff, 0x7f, /* Logical Maximum (32767) */
-
-
- //0x75, 8, // Report Size (8) 
- 0x75, 16, // Report Size (16) 
- 0x95, 3, // Report Count (3) 
- 0x81, 0x82, // Input (Data, Variable, Absolute, Volatile) 
- 0xc0, // End Collection 
-
-
- 0xc0	// END_COLLECTION
-/**/
-
 };
 
 extern const HIDDescriptor _hidInterface PROGMEM;
@@ -189,7 +151,7 @@ int WEAK HID_GetInterface(u8* interfaceNum)
 	return USB_SendControl(TRANSFER_PGM,&_hidInterface,sizeof(_hidInterface));
 }
 
-int WEAK HID_GetDescriptor(int i)
+int WEAK HID_GetDescriptor(int /* i */)
 {
 	return USB_SendControl(TRANSFER_PGM,_hidReportDescriptor,sizeof(_hidReportDescriptor));
 }
@@ -294,30 +256,6 @@ bool Mouse_::isPressed(uint8_t b)
 		return true;
 	return false;
 }
-
-//== ==============================================================================
-//================================================================================
-//	Tracker
-//  Usage: Tracker.setState(inputs go here)
-//
-
-Tracker_::Tracker_()
-{
-}
-
-
-void Tracker_::setState(TrackState_t *trackerSt)
-{
-	int16_t data[3];
-	
-	data[0] = trackerSt->xAxis;		// X axis
-	data[1] = trackerSt->yAxis;		// Y axis
-	data[2] = trackerSt->zAxis;		// Z axis
-	
-	//HID_SendReport(Report number, array of values in same order as HID descriptor, length)
-	HID_SendReport(4, data, 6);
-}
-
 
 //================================================================================
 //================================================================================
@@ -572,13 +510,10 @@ void Keyboard_::releaseAll(void)
 
 size_t Keyboard_::write(uint8_t c)
 {	
-	uint8_t p = press(c);		// Keydown
-	uint8_t r = release(c);		// Keyup
-	return (p);					// just return the result of press() since release() almost always returns 1
+	uint8_t p = press(c);  // Keydown
+	release(c);            // Keyup
+	return p;              // just return the result of press() since release() almost always returns 1
 }
-
-
-
 
 #endif
 

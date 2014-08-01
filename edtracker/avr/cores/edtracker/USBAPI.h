@@ -32,20 +32,23 @@ struct ring_buffer;
 #else
 #define SERIAL_BUFFER_SIZE 64
 #endif
- 
+
 class Serial_ : public Stream
 {
+private:
+	int peek_buffer;
 public:
+	Serial_() { peek_buffer = -1; };
 	void begin(unsigned long);
 	void begin(unsigned long, uint8_t);
 	void end(void);
 
 	virtual int available(void);
-	virtual void accept(void);
 	virtual int peek(void);
 	virtual int read(void);
 	virtual void flush(void);
 	virtual size_t write(uint8_t);
+	virtual size_t write(const uint8_t*, size_t);
 	using Print::write; // pull in write(str) and write(buf, size) from Print
 	operator bool();
 
@@ -147,34 +150,6 @@ public:
 	virtual void releaseAll(void);
 };
 extern Keyboard_ Keyboard;
-
-//================================================================================
-//================================================================================
-//	Head Tracker
-//  Implemented in HID.cpp
-//  The list of parameters here needs to match the implementation in HID.cpp
-
- 
-
-typedef struct TrackState 		
-{
-	int16_t		xAxis; 
-	int16_t		yAxis;
-	int16_t		zAxis;
-
-} TrackState_t;
-
-class Tracker_
-{
-public:
-	Tracker_();
-
-	void setState(TrackState_t *trackSt);
-
-};
-extern Tracker_ Tracker;
-
-
 
 //================================================================================
 //================================================================================
